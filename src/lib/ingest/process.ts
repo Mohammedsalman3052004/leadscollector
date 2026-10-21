@@ -20,19 +20,56 @@ export interface SiteRecord {
   workspace: { plan: string; suspended: boolean };
 }
 
+
 export async function loadSite(publicId: string): Promise<SiteRecord | null> {
-  if (!/^[A-Za-z0-9_]{8,64}$/.test(publicId)) return null;
-  const { data } = await adminClient()
+  if (!/^[A-Za-z0-9_]{8,64}$/.test(publicId)) {
+    console.error('[loadSite] Invalid public ID format');
+    return null;
+  }
+
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  console.log('[loadSite] Environment check:', {
+    hasUrl: !!url,
+    hasServiceRoleKey: !!key,
+    supabaseHost: url ? new URL(url).host : null,
+    requestedId: publicId,
+  });
+
+  const { data, error } = await adminClient()
     .from('websites')
-    .select('id,workspace_id,domain,allowed_domains,status,public_site_id,webhook_secret,settings,workspace:workspaces(plan,suspended)')
+    .select(
+      'id,workspace_id,domain,allowed_domains,status,public_site_id,webhook_secret,settings,workspace:workspaces(plan,suspended)'
+    )
     .eq('public_site_id', publicId)
     .maybeSingle();
-  if (!data) return null;
+
+  console.log('[loadSite] Database lookup:', {
+    found: !!data,
+    errorCode: error?.code ?? null,
+    errorMessage: error?.message ?? null,
+  });
+
+  if (error || !data) return null;
+
   const row: any = data;
-  const ws = Array.isArray(row.workspace) ? row.workspace[0] : row.workspace;
-  if (!ws) return null;
-  return { ...row, settings: row.settings ?? {}, workspace: ws } as SiteRecord;
+  const ws = Array.isArray(row.workspace)
+    ? row.workspace[0]
+    : row.workspace;
+
+  if (!ws) {
+    console.error('[loadSite] Website found, but workspace is missing');
+    return null;
+  }
+
+  return {
+    ...row,
+    settings: row.settings ?? {},
+    workspace: ws,
+  } as SiteRecord;
 }
+
 
 export function siteUsable(site: SiteRecord) {
   return site.status !== 'disabled' && !site.workspace.suspended;
