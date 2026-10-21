@@ -40,7 +40,7 @@ export function safeNext(value: unknown, fallback = '/app') {
 }
 
 export function appUrl() {
-  return (process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000').replace(/\/$/, '');
+  return (process.env.NEXT_PUBLIC_APP_URL || 'https://leadscollectors.vercel.app').replace(/\/$/, '');
 }
 
 export function escapeHtml(s: string) {

@@ -18,7 +18,7 @@ npx supabase login
 npx supabase link --project-ref YOUR-PROJECT-REF
 npx supabase db push              # applies supabase/migrations/*.sql (schema, functions, RLS)
 npm run seed                      # optional demo workspace + sample leads (never run in production)
-npm run dev                       # http://localhost:3000
+npm run dev                       # https://leadscollectors.vercel.app
 ```
 
 Make yourself platform admin (once, in the Supabase SQL editor, after signing up):
