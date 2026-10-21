@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* RGB channels so Tailwind opacity modifiers (bg-tint/60) work. Swap these for a dark theme later. */
+  --bg: 250 248 244;
+  --surface: 255 255 255;
+  --border: 232 227 218;
+  --ink: 28 27 25;
+  --muted: 107 103 95;
+  --accent: 184 146 74;
+  --accent-ink: 122 92 31;
+  --accent-tint: 243 235 218;
+  color-scheme: light;
+}
+
+html { -webkit-text-size-adjust: 100%; }
+body {
+  background: rgb(var(--bg));
+  color: rgb(var(--ink));
+  font-family: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: rgb(var(--accent-tint)); }
+:focus-visible { outline: 2px solid rgb(var(--accent)); outline-offset: 2px; border-radius: 6px; }
+
+@layer components {
+  .display { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; letter-spacing: -0.01em; }
+  .field {
+    @apply h-10 w-full rounded-md border border-line bg-surface px-3 text-[14px] text-ink placeholder:text-muted/70 transition-colors;
+  }
+  .field:hover { border-color: #d8d1c4; }
+  .field:focus { outline: none; border-color: rgb(var(--accent)); box-shadow: 0 0 0 3px rgb(var(--accent-tint)); }
+  textarea.field { @apply h-auto min-h-[88px] py-2; }
+  .label { @apply mb-1.5 block text-[12px] font-medium text-muted; }
+  .hairline { border-color: rgb(var(--border)); }
+  .skeleton { @apply animate-pulse rounded-md bg-line/70; }
+  .th { @apply px-3 py-2.5 text-left text-[12px] font-medium text-muted; }
+  .td { @apply px-3 py-3 align-top; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
